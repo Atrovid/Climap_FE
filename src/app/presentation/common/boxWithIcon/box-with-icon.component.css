@@ -1,0 +1,45 @@
+.boxWithIcon {
+    padding: 4em 0;
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+    align-items: center;
+
+    margin: 2em;
+}
+
+.boxWithIcon-primary {
+    background-color: #ffffff;
+    color: #114730;
+}
+
+.boxWithIcon-secondary {
+    background-color: #9ddda8;
+    color: #fff;
+}
+
+.boxWithIcon-left {
+    flex-direction: row;
+}
+
+.boxWithIcon-right {
+    flex-direction: row-reverse;
+}
+
+img{
+    height: 10em;
+}
+
+.content-text {
+    max-width: 1280px;
+    margin: 0 auto;
+
+    text-align: center;
+
+    font-family: Lexend;
+    font-weight: 300;
+
+    border: 1px solid;
+    border-radius: 30px;
+    padding: 10px;
+}
