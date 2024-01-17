@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color: #114730;
-  background-color: #fcfcfc;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -49,27 +49,27 @@ button:focus-visible {
 }
 
 @font-face {
-  font-family: 'Jost';
-  src: url('./assets/fonts/jost/Jost-Regular.ttf');
+  font-family: "Jost";
+  src: url("./assets/fonts/jost/Jost-Regular.ttf");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Jost';
-  src: url('assets/fonts/jost/Jost-Light.ttf');
+  font-family: "Jost";
+  src: url("assets/fonts/jost/Jost-Light.ttf");
   font-weight: 300;
 }
 
 @font-face {
-  font-family: 'Lexend';
-  src: url('assets/fonts/lexend/Lexend-Regular.ttf');
+  font-family: "Lexend";
+  src: url("assets/fonts/lexend/Lexend-Regular.ttf");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Lexend';
-  src: url('assets/fonts/lexend/Lexend-Light.ttf');
+  font-family: "Lexend";
+  src: url("assets/fonts/lexend/Lexend-Light.ttf");
   font-weight: 300;
 }
