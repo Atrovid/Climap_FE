@@ -40,3 +40,8 @@ h1 {
 .map-img {
   height: 350px;
 }
+
+.rounded-border {
+  width: 100%;
+  margin-bottom: -6px;
+}
