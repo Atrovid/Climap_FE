@@ -14,6 +14,9 @@ h1 {
   padding-bottom: 5rem;
 
   text-align: center;
+  font-family: Lexend;
+  font-weight: 300;
+
 }
 
 .section-bg-primary {
@@ -43,6 +46,8 @@ h1 {
   max-width: 720px;
   margin: 0 auto;
   text-align: center;
+  font-family: Jost;
+  font-weight: 400;
 }
 
 .content-flex-h {
@@ -51,6 +56,8 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 2em;
+  font-family: Jost;
+  font-weight: 400;
 }
 
 .content-flex-h > p {
