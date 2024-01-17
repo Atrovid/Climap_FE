@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { BoxWithIconComponent } from '../common/boxWithIcon/box-with-icon.component';
+import { Component } from "@angular/core";
+import { BoxWithIconComponent } from "../common/boxWithIcon/box-with-icon.component";
+import { SectionComponent } from "../common/section/section.component";
 
 @Component({
-  selector: 'app-critic',
-  standalone: true,
-  imports: [BoxWithIconComponent],
-  templateUrl: './critic.component.html',
-  styleUrl: './critic.component.css'
+    selector: "app-critic",
+    standalone: true,
+    templateUrl: "./critic.component.html",
+    styleUrl: "./critic.component.css",
+    imports: [BoxWithIconComponent, SectionComponent],
 })
 export class CriticComponent {}
