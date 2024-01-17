@@ -25,8 +25,8 @@
         }
 
         #mapid {
-            height: 400px;
-            width: 600px; /* Largeur rectangulaire */
+            height: 500px;
+            width: 500px; /* Largeur rectangulaire */
             border: 2px solid #357a38; /* Bordure verte */
             margin: 20px;
             box-shadow: 0 0 10px #999; /* Ombre portée */
@@ -37,35 +37,77 @@
 
 <div id="mapid"></div>
 
-
 <script>
-    // Créer la carte et la centrer sur Limoges
-    var mymap = L.map('mapid').setView([45.8336, 1.2611], 13); // Coordonnées de Limoges
+    var mymap = L.map('mapid').setView([49.183399, -0.350020], 11.5); // Coordonnées de Caen
 
-    // Ajouter les tuiles de carte (OpenStreetMap dans cet exemple)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap contributors'
     }).addTo(mymap);
 
-    // Ajouter une icône personnalisée
-    var customIcon = L.icon({
-        iconUrl: 'leaf-orange.png', // Remplacez par l'URL de votre icône
-        iconSize: [38 / 4, 95 / 4], // Taille de l'icône réduite au quart
-        iconAnchor: [38 / 8, 95 / 4], // Ajustement de l'ancre de l'icône
-        popupAnchor: [-3, -76] // Vous pouvez également ajuster cela si nécessaire
+    // Créer la couche de heatmap et l'ajouter à la carte
+    function distance(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Rayon de la Terre en km
+    var dLat = (lat2 - lat1) * (Math.PI / 180);
+    var dLon = (lon2 - lon1) * (Math.PI / 180);
+    var a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+    return R * c; // Distance en km
+}
+
+// Fonction pour calculer la température moyenne pondérée
+function calculateWeightedTemp(lat, lon, points) {
+    let weightSum = 0;
+    let tempSum = 0;
+
+    points.forEach(point => {
+        let dist = distance(lat, lon, point.lat, point.lon);
+        if (dist === 0) dist = 0.0001; // éviter la division par zéro
+        let weight = 1 / dist;
+        tempSum += weight * point.temp;
+        weightSum += weight;
     });
+
+    return tempSum / weightSum;
+}
+
+// Points centraux avec leurs températures
+var centralPoints = [
+    {lat: 49.181479, lon: -0.365639, temp: 19}, // Centre-ville
+    {lat: 49.204589, lon: -0.361862, temp: 18}, // Zone nord
+    {lat: 49.148254, lon: -0.354652, temp: 19}, // Zone sud
+    {lat: 49.181255, lon: -0.418854, temp: 20}, // Zone ouest
+    {lat: 49.185518, lon: -0.325127, temp: 18.5}, // Zone est
+];
+
+// Générer la heatmap pour une grille de points sur Caen
+var heatData = [];
+for (let lat = 49.140000; lat <= 49.220000; lat += 0.002) {
+    for (let lon = -0.420000; lon <= -0.300000; lon += 0.002) {
+        let temp = calculateWeightedTemp(lat, lon, centralPoints);
+        heatData.push([lat, lon, temp]);
+    }
+}
+var heat = L.heatLayer([], {
+    radius: 2,
+    blur: 25,
+    maxZoom: 17,
+}).addTo(mymap);
+
+
+    // Ajouter les données à la heatmap
+    heat.setLatLngs(heatData);
+        // Gestion des clics sur la carte
     function onMapClick(e) {
-        L.marker(e.latlng, {icon: customIcon}).addTo(mymap)
+        L.marker(e.latlng).addTo(mymap)
             .bindPopup("Vous avez cliqué à la position : " + e.latlng.toString())
             .openPopup();
     }
 
     mymap.on('click', onMapClick);
-    // // Placer une icône à Limoges
-    // L.marker([45.8336, 1.2611], {icon: customIcon}).addTo(mymap)
-    //     .bindPopup("Un endroit intéressant à Limoges.")
-    //     .openPopup();
 </script>
 
 </body>
