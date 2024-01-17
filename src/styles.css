@@ -49,8 +49,8 @@ button:focus-visible {
 }
 
 @font-face {
-  font-family: "Jost";
-  src: url("./assets/fonts/jost/Jost-Regular.ttf");
+  font-family: 'Jost';
+  src: url('assets/fonts/jost/Jost-Regular.ttf');
   font-weight: 400;
   font-style: normal;
 }
