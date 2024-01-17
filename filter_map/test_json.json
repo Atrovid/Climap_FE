@@ -1,0 +1,36 @@
+[
+{
+"latitude": 46.7196181682508,
+"longitude": 77.7462972278178,
+
+"heat": [
+{
+"celsiusDegree": 43.2744973740857
+}
+],
+"sound": [
+{
+"decibel": 92.9210643567959
+}
+],
+"brightness": [
+{
+"lux": 51.5106507489826
+}
+],
+"dateDataCapture": "2023-05-267T12:43:30.700+00:00",
+"humidity": [
+{
+"particlesPerCubicCentimeter": 72.8533518480013
+}
+],
+"microparticle": [
+{
+"particlesPerCubicCentimeter": 63.1046775677967
+}
+],
+
+"idCharacteristic": 3301
+}
+]
+
