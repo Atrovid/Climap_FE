@@ -1,0 +1,25 @@
+.section {
+  padding: 4em 0;
+}
+
+.section-primary {
+  background-color: #ffffff;
+  color: #114730;
+}
+
+.section-secondary {
+  background-color: #2ddb68;
+  color: #fff;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4em;
+  align-items: center;
+
+  max-width: 1280px;
+  margin: 0 auto;
+
+  text-align: center;
+}

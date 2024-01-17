@@ -1,42 +1,18 @@
+:host {
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
-#app {
-  margin: 0 auto;
-  text-align: center;
-}
-
-.section-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding-bottom: 5rem;
-
-  text-align: center;
-}
-
-.section-bg-primary {
-  width: 100vw;
-  height: 100%;
-  padding-top: 5rem;
-
-  background-color: #ffffff;
-  color: #114730;
-}
-
-.section-bg-secondary {
-  width: 100vw;
-  height: 100%;
-  padding-top: 5rem;
-
-  background-color: #2ddb68;
-  color: #fff;
-}
-
 .main-logo {
   height: 15em;
-  margin: 2em 0 2em;
+  margin: 2em 0 -2em;
 }
 
 .center-text {
@@ -46,7 +22,6 @@ h1 {
 }
 
 .content-flex-h {
-  /* margin: 0 auto; */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
