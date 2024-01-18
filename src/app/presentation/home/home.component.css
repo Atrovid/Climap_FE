@@ -5,6 +5,7 @@
   display: block;
 }
 
+
 .content{
   position: relative;
   height: 80vh;
@@ -53,6 +54,18 @@ h1 {
   max-width: 25em;
   text-shadow: 3px 4px 11px rgba(0,0,0,0.72);
   padding: 1em;
+}
+
+#presentation {
+  scroll-margin-top: 105px;
+}
+
+#critic {
+  scroll-margin-top: 115px;
+}
+
+#technique {
+  scroll-margin-top: 115px;
 }
 
 

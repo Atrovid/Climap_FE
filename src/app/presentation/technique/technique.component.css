@@ -1,0 +1,54 @@
+.center-text {
+    font-family: Jost;
+    font-weight: 400;
+    font-size: 1.5vw;
+  }
+  
+  h1{
+    font-family: Lexend;
+    font-weight: 400;
+    font-size: 3em;
+  } 
+
+  .image{
+    /* hanging-punctuation: 15em; */
+    border-radius: 15px;
+    -webkit-box-shadow: 2px 4px 11px 0px rgba(0,0,0,0.72); 
+    box-shadow: 2px 4px 11px 0px rgba(0,0,0,0.72);
+  }
+
+  .content-text {
+    max-width: 1280px;
+    margin: 0 auto;
+
+    text-align: center;
+
+    font-family: Lexend;
+    font-weight: 300;
+
+    border: 1px solid;
+    border-radius: 30px;
+    padding: 10px;
+}
+#hr1{
+    margin-left: 8em;
+    background-color: #2ddb6773;
+    height: 5px;
+}
+#hr2{
+    margin-right: 8em;
+    height: 5px;
+    background-color: #2ddb6773;
+}
+.content {
+    /* padding: 4em 0; */
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+    align-items: center;
+
+    margin: 2em;
+}
+#list{
+    text-align: start;
+}
