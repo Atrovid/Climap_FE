@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { LeafletModule } from "@asymmetrik/ngx-leaflet";
 import * as L from "leaflet";
 import "leaflet.heat/dist/leaflet-heat.js";
+import { SensorService } from "../sensor.service";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -26,91 +27,66 @@ L.Marker.prototype.options.icon = iconDefault;
     styleUrl: "./map.component.css",
 })
 export class MapComponent {
+    constructor(private sensorService: SensorService) {}
+
+    map!: L.Map;
+    // @ts-ignore
+    heatLayer!: L.HeatLayer;
+    markers: L.Marker<any>[] = [];
+
     options = {
         layers: [
             L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 18,
-                attribution: "",
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             }),
         ],
         zoom: 13,
         center: L.latLng(49.1828, -0.3708),
     };
 
-    jsonObj = [
-        {
-            latitude: 49.1828,
-            longitude: -0.3708,
+    async loadVisibleMeasurements() {
+        const measurements = await this.sensorService.getSensorData(this.map.getBounds());
 
-            heat: [
-                {
-                    celsiusDegree: 43.2744973740857,
-                },
-            ],
-            sound: [
-                {
-                    decibel: 92.9210643567959,
-                },
-            ],
-            brightness: [
-                {
-                    lux: 51.5106507489826,
-                },
-            ],
-            dateDataCapture: "2023-05-267T12:43:30.700+00:00",
-            humidity: [
-                {
-                    particlesPerCubicCentimeter: 72.8533518480013,
-                },
-            ],
-            microparticle: [
-                {
-                    particlesPerCubicCentimeter: 63.1046775677967,
-                },
-            ],
+        this.heatLayer.setLatLngs(measurements.map((m) => [m.latitude, m.longitude, m.heat[0].celsiusDegree]));
+        this.heatLayer.redraw();
 
-            idCharacteristic: 3301,
-        },
-    ];
-
-    startMap(map: L.Map) {
-        // cette partie est à decommenter lorsqu'on commence à utuiliser des fichiers json
-        // fetch('http://127.0.0.1:8080/message.json')
-        //   .then(response => response.json())
-        //   .then(jsonData => {
-        // Appeler la fonction pour recupérer les données JSON
-
-        const SensorsData = this.jsonObj;
-
-        // Ajouter la couche OpenStreetMap à la carte
-        // @ts-ignore
-        L.heatLayer(
-            SensorsData.map((point) => [point.latitude, point.longitude, point.heat[0].celsiusDegree]),
-            { radius: 25 }
-        ).addTo(map);
-
-        // Ajouter des tooltips pour chaque point
-        for (const point of SensorsData) {
-            L.marker([point.latitude, point.longitude])
-                .bindTooltip(
-                    "Sensor n° " +
-                        point.idCharacteristic +
-                        "\n Heat" +
-                        point.heat[0].celsiusDegree +
-                        "\nSound " +
-                        point.sound[0].decibel +
-                        "\nBrightness " +
-                        point.brightness[0].lux +
-                        "\nHumidity " +
-                        point.humidity[0].particlesPerCubicCentimeter +
-                        "\nMicroparticle " +
-                        point.microparticle[0].particlesPerCubicCentimeter
-                )
-                .addTo(map);
+        // Reset tooltips
+        for (const marker of this.markers) {
+            this.map.removeLayer(marker);
         }
+        this.markers = [];
 
-        // })
-        //   .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
+        // Tooltips
+        for (const point of measurements) {
+            const newMarker = L.marker([point.latitude, point.longitude])
+                .bindTooltip(
+                    `Mesure n° ${point.idMeasurement}
+                        <br/>Température : ${point.heat[0].celsiusDegree.toFixed(1)} °C
+                        <br/>Son : ${point.sound[0].decibel.toFixed(0)} dB
+                        <br/>Luminosité : ${point.brightness[0].lux.toFixed(2)} lux
+                        <br/>Humidité : ${point.humidity[0].relativeHumidityPercentage.toFixed(3)} part/cm³
+                        <br/>Microparticules : ${point.microparticle[0].particlesPerCubicCentimeter.toFixed(
+                            3
+                        )}  part/cm³`
+                )
+                .addTo(this.map);
+
+            this.markers.push(newMarker);
+        }
+    }
+
+    async startMap(map: L.Map) {
+        this.map = map;
+
+        // @ts-ignore
+        this.heatLayer = L.heatLayer([], { radius: 25 }).addTo(map);
+
+        this.loadVisibleMeasurements();
+
+        map.on("moveend", () => {
+            this.loadVisibleMeasurements();
+        });
     }
 
     onMapReady(map: any) {
