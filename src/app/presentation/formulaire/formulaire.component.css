@@ -1,0 +1,63 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .formulaire-page {
+    background-color: transparent;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;  
+    text-align: center;  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+    border-radius: 10px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+  }
+  
+  label {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+
+  
+  div {
+    margin-top: 10px;
+  }
+  h1{
+    font-family: Lexend;
+    font-weight: 400;
+    font-size: 3em;
+    color: black;
+  } 
+
+  
+  .submit{
+    margin-top: 2em;
+  }
+  span{
+    padding: 1em
+  }
