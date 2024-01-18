@@ -1,7 +1,10 @@
-import { Component } from "@angular/core";
+import { AfterViewInit, Component } from "@angular/core";
 import { LeafletModule } from "@asymmetrik/ngx-leaflet";
 import * as L from "leaflet";
 import "leaflet.heat/dist/leaflet-heat.js";
+import { Measurement, SensorService } from "../sensor.service";
+
+import { TemperatureMap } from "./temperatureMap";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -25,92 +28,111 @@ L.Marker.prototype.options.icon = iconDefault;
     templateUrl: "./map.component.html",
     styleUrl: "./map.component.css",
 })
-export class MapComponent {
+export class MapComponent implements AfterViewInit {
+    constructor(private sensorService: SensorService) {}
+
+    ngAfterViewInit(): void {
+        this.canvas = document.getElementById("cns0")! as HTMLCanvasElement;
+    }
+
+    dataType = "brightness";
+
+    map!: L.Map;
+    heatOverlay?: L.ImageOverlay;
+    markers: L.Marker<any>[] = [];
+
+    canvas!: HTMLCanvasElement;
+
     options = {
         layers: [
             L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 18,
-                attribution: "",
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             }),
         ],
         zoom: 13,
         center: L.latLng(49.1828, -0.3708),
     };
 
-    jsonObj = [
-        {
-            latitude: 49.1828,
-            longitude: -0.3708,
+    async loadVisibleMeasurements() {
+        const measurements = await this.sensorService.getSensorData(this.getBoundsWithMargin(1.4));
 
-            heat: [
-                {
-                    celsiusDegree: 43.2744973740857,
-                },
-            ],
-            sound: [
-                {
-                    decibel: 92.9210643567959,
-                },
-            ],
-            brightness: [
-                {
-                    lux: 51.5106507489826,
-                },
-            ],
-            dateDataCapture: "2023-05-267T12:43:30.700+00:00",
-            humidity: [
-                {
-                    particlesPerCubicCentimeter: 72.8533518480013,
-                },
-            ],
-            microparticle: [
-                {
-                    particlesPerCubicCentimeter: 63.1046775677967,
-                },
-            ],
+        this.drawHeatMap(measurements);
 
-            idCharacteristic: 3301,
-        },
-    ];
-
-    startMap(map: L.Map) {
-        // cette partie est à decommenter lorsqu'on commence à utuiliser des fichiers json
-        // fetch('http://127.0.0.1:8080/message.json')
-        //   .then(response => response.json())
-        //   .then(jsonData => {
-        // Appeler la fonction pour recupérer les données JSON
-
-        const SensorsData = this.jsonObj;
-
-        // Ajouter la couche OpenStreetMap à la carte
-        // @ts-ignore
-        L.heatLayer(
-            SensorsData.map((point) => [point.latitude, point.longitude, point.heat[0].celsiusDegree]),
-            { radius: 25 }
-        ).addTo(map);
-
-        // Ajouter des tooltips pour chaque point
-        for (const point of SensorsData) {
-            L.marker([point.latitude, point.longitude])
-                .bindTooltip(
-                    "Sensor n° " +
-                        point.idCharacteristic +
-                        "\n Heat" +
-                        point.heat[0].celsiusDegree +
-                        "\nSound " +
-                        point.sound[0].decibel +
-                        "\nBrightness " +
-                        point.brightness[0].lux +
-                        "\nHumidity " +
-                        point.humidity[0].particlesPerCubicCentimeter +
-                        "\nMicroparticle " +
-                        point.microparticle[0].particlesPerCubicCentimeter
-                )
-                .addTo(map);
+        // Reset tooltips
+        for (const marker of this.markers) {
+            this.map.removeLayer(marker);
         }
+        this.markers = [];
 
-        // })
-        //   .catch(error => console.error('Erreur lors du chargement du fichier JSON :', error));
+        // Tooltips
+        for (const point of measurements) {
+            const newMarker = L.marker([point.latitude, point.longitude])
+                .bindTooltip(
+                    `Mesure n° ${point.idMeasurement}
+                        <br/>Température : ${point.heat[0].celsiusDegree.toFixed(1)} °C
+                        <br/>Son : ${point.sound[0].decibel.toFixed(0)} dB
+                        <br/>Luminosité : ${point.brightness[0].lux.toFixed(2)} lux
+                        <br/>Humidité : ${point.humidity[0].relativeHumidityPercentage.toFixed(3)} part/cm³
+                        <br/>Microparticules : ${point.microparticle[0].particlesPerCubicCentimeter.toFixed(
+                            3
+                        )}  part/cm³`
+                )
+                .addTo(this.map);
+
+            this.markers.push(newMarker);
+        }
+    }
+
+    async startMap(map: L.Map) {
+        this.map = map;
+
+        this.loadVisibleMeasurements();
+
+        map.on("moveend", () => {
+            this.loadVisibleMeasurements();
+        });
+    }
+
+    drawHeatMap(measurements: Measurement[]) {
+        // Préparation et dessin de la TemperatureMap sur le canvas
+        const ctx0 = this.canvas.getContext("2d")!,
+            drw0 = new TemperatureMap(ctx0);
+
+        ctx0.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        drw0.setPointsFromJSON(measurements, this.canvas.width, this.canvas.height, this.dataType);
+        drw0.drawLow(
+            5,
+            8,
+            false,
+            () => {
+                drw0.drawPoints(this.dataType).then(() => {
+                    var imageUrl = this.canvas.toDataURL();
+                    var imageBounds: L.LatLngTuple[] = [
+                        [49.128039, -0.43499],
+                        [49.238, -0.265388],
+                    ];
+                    if (!this.heatOverlay) this.heatOverlay = L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
+                    this.heatOverlay.setUrl(imageUrl);
+                });
+            },
+            this.dataType
+        );
+    }
+
+    getBoundsWithMargin(mult: number): L.LatLngBounds {
+        const bounds = this.map.getBounds();
+
+        const difLat = bounds.getNorth() - bounds.getSouth();
+        const difLng = bounds.getEast() - bounds.getWest();
+        const centerLat = (bounds.getNorth() + bounds.getSouth()) / 2;
+        const centerLng = (bounds.getEast() + bounds.getWest()) / 2;
+
+        return new L.LatLngBounds([
+            [centerLat - difLat * mult, centerLng - difLng * mult],
+            [centerLat + difLat * mult, centerLng + difLng * mult],
+        ]);
     }
 
     onMapReady(map: any) {
