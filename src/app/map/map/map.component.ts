@@ -83,7 +83,11 @@ export class MapComponent {
         const SensorsData = this.jsonObj;
 
         // Ajouter la couche OpenStreetMap à la carte
-        // L.heatLayer(SensorsData, { radius: 25 }).addTo(map);
+        // @ts-ignore
+        L.heatLayer(
+            SensorsData.map((point) => [point.latitude, point.longitude, point.heat[0].celsiusDegree]),
+            { radius: 25 }
+        ).addTo(map);
 
         // Ajouter des tooltips pour chaque point
         for (const point of SensorsData) {
