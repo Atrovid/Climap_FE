@@ -1,0 +1,43 @@
+:host {
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
+    display: block;
+  }
+  
+  .section-right {
+    margin: auto;
+  }
+  
+  .center-text {
+    /* max-width: 720px;
+    margin: 0 auto; */
+    text-align: center;
+    font-family: Jost;
+    font-weight: 400;
+    font-size: 20px;
+  }
+  
+  .content-flex-h {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    /* font-family: Jost;
+    font-weight: 400; */
+    padding: 2em;  
+  }
+  
+  .content-flex-h > p {
+    min-width: 400px;
+    width: min-content;
+  }
+  
+  .map-img {
+    height: 250px;
+  }
+  
+  .button {
+    margin: 1em;
+    margin-bottom: 4em;  
+  }
