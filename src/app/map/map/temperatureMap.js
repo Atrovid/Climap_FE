@@ -399,41 +399,41 @@ TemperatureMap.prototype.drawFull = function (levels, callback) {
     recursive();
 };
 
-TemperatureMap.prototype.drawPoints = function (dataType, callback) {
+TemperatureMap.prototype.drawPoints = async function (dataType) {
     var self = this,
         PI2 = 2 * Math.PI,
         ctx = this.ctx;
 
-    window.requestAnimationFrame(function (timestamp) {
-        var col = [],
-            idx = 0,
-            pnt;
+    return new Promise((res) => {
+        window.requestAnimationFrame((timestamp) => {
+            var col = [],
+                idx = 0,
+                pnt;
 
-        for (idx = 0; idx < self.points.length; idx += 1) {
-            pnt = self.points[idx];
+            for (idx = 0; idx < self.points.length; idx += 1) {
+                pnt = self.points[idx];
 
-            // Utilisez dataType dans la fonction getColor
-            col = self.getColor(false, pnt.value, dataType);
+                // Utilisez dataType dans la fonction getColor
+                col = self.getColor(false, pnt.value, dataType);
 
-            ctx.fillStyle = "rgba(255, 255, 255, 128)";
-            ctx.beginPath();
-            ctx.arc(pnt.x, pnt.y, 8, 0, PI2, false);
-            ctx.fill();
+                ctx.fillStyle = "rgba(255, 255, 255, 128)";
+                ctx.beginPath();
+                ctx.arc(pnt.x, pnt.y, 8, 0, PI2, false);
+                ctx.fill();
 
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "rgb(" + col[0] + ", " + col[1] + ", " + col[2] + ")";
-            ctx.beginPath();
-            ctx.arc(pnt.x, pnt.y, 8, 0, PI2, false);
-            ctx.stroke();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "rgb(" + col[0] + ", " + col[1] + ", " + col[2] + ")";
+                ctx.beginPath();
+                ctx.arc(pnt.x, pnt.y, 8, 0, PI2, false);
+                ctx.stroke();
 
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle = "rgb(0, 0, 0)";
-            ctx.fillText(Math.round(pnt.value), pnt.x, pnt.y);
-        }
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = "rgb(0, 0, 0)";
+                ctx.fillText(Math.round(pnt.value), pnt.x, pnt.y);
+            }
 
-        if (typeof callback === "function") {
-            callback();
-        }
+            res();
+        });
     });
 };

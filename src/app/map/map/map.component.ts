@@ -55,7 +55,7 @@ export class MapComponent implements AfterViewInit {
     };
 
     async loadVisibleMeasurements() {
-        const measurements = await this.sensorService.getSensorData(this.map.getBounds());
+        const measurements = await this.sensorService.getSensorData(this.getBoundsWithMargin(1.4));
 
         this.drawHeatMap(measurements);
 
@@ -87,9 +87,6 @@ export class MapComponent implements AfterViewInit {
     async startMap(map: L.Map) {
         this.map = map;
 
-        // @ts-ignore
-        this.heatLayer = L.heatLayer([], { radius: 25 }).addTo(map);
-
         this.loadVisibleMeasurements();
 
         map.on("moveend", () => {
@@ -103,7 +100,6 @@ export class MapComponent implements AfterViewInit {
             drw0 = new TemperatureMap(ctx0);
 
         ctx0.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        if (this.heatOverlay) this.map.removeLayer(this.heatOverlay);
 
         drw0.setPointsFromJSON(measurements, this.canvas.width, this.canvas.height, this.dataType);
         drw0.drawLow(
@@ -111,17 +107,32 @@ export class MapComponent implements AfterViewInit {
             8,
             false,
             () => {
-                drw0.drawPoints(this.dataType, () => {
+                drw0.drawPoints(this.dataType).then(() => {
                     var imageUrl = this.canvas.toDataURL();
                     var imageBounds: L.LatLngTuple[] = [
                         [49.128039, -0.43499],
                         [49.238, -0.265388],
                     ];
-                    this.heatOverlay = L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
+                    if (!this.heatOverlay) this.heatOverlay = L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
+                    this.heatOverlay.setUrl(imageUrl);
                 });
             },
             this.dataType
         );
+    }
+
+    getBoundsWithMargin(mult: number): L.LatLngBounds {
+        const bounds = this.map.getBounds();
+
+        const difLat = bounds.getNorth() - bounds.getSouth();
+        const difLng = bounds.getEast() - bounds.getWest();
+        const centerLat = (bounds.getNorth() + bounds.getSouth()) / 2;
+        const centerLng = (bounds.getEast() + bounds.getWest()) / 2;
+
+        return new L.LatLngBounds([
+            [centerLat - difLat * mult, centerLng - difLng * mult],
+            [centerLat + difLat * mult, centerLng + difLng * mult],
+        ]);
     }
 
     onMapReady(map: any) {
