@@ -1,11 +1,11 @@
-* {
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     
-  }
+  } */
   
-  body {
+  /* body {
     font-family: 'Arial', sans-serif;
     background-color: #f0f0f0;
     display: flex;
@@ -13,7 +13,7 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
-  }
+  } */
   
   .formulaire-page {
     background-color: transparent;
@@ -54,10 +54,10 @@
     color: black;
   } 
 
-  
-  .submit{
-    margin-top: 2em;
+  p {
+    color: black;
   }
-  span{
-    padding: 1em
+  
+  .button {
+    margin: 2em;
   }

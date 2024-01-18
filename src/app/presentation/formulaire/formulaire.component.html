@@ -1,24 +1,28 @@
 <div class="formulaire-page">
     <h1>Contactez-nous pour recevoir votre CAPI !</h1>
-    <form>
+    <form >
         <div class="form-group">
             <label for="name">
                Nom
-            </label><input class="input">
+            </label><input class="input" (click)="noSend()">
         </div>
         <div class="form-group">
             <label for="surname">
               Prénom
-            </label><input class="input">
+            </label><input class="input" (click)="noSend()">
         </div>
         <div class="form-group">
             <label for="email">
              Email
-            </label><input class="input">
+            </label><input class="input" (click)="noSend()">
         </div>    
-       <button class="submit" type="submit"  ><!--(click)="send()" -->
-        <span>Envoyer</span>
-      </button>
+        <button class="button" (click)="send()">
+            <span>Envoyer</span>
+        </button>
+
+      <div *ngIf="sendOk == true">
+        <p>Votre formulaire est envoyé, nous vous recontacterons afin de vous envoyer votre CAPI !</p>
+      </div>
     </form>
   </div>
   
