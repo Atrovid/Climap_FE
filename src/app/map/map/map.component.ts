@@ -1,8 +1,10 @@
-import { Component } from "@angular/core";
+import { AfterViewInit, Component } from "@angular/core";
 import { LeafletModule } from "@asymmetrik/ngx-leaflet";
 import * as L from "leaflet";
 import "leaflet.heat/dist/leaflet-heat.js";
-import { SensorService } from "../sensor.service";
+import { Measurement, SensorService } from "../sensor.service";
+
+import { TemperatureMap } from "./temperatureMap";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -26,13 +28,20 @@ L.Marker.prototype.options.icon = iconDefault;
     templateUrl: "./map.component.html",
     styleUrl: "./map.component.css",
 })
-export class MapComponent {
+export class MapComponent implements AfterViewInit {
     constructor(private sensorService: SensorService) {}
 
+    ngAfterViewInit(): void {
+        this.canvas = document.getElementById("cns0")! as HTMLCanvasElement;
+    }
+
+    dataType = "brightness";
+
     map!: L.Map;
-    // @ts-ignore
-    heatLayer!: L.HeatLayer;
+    heatOverlay?: L.ImageOverlay;
     markers: L.Marker<any>[] = [];
+
+    canvas!: HTMLCanvasElement;
 
     options = {
         layers: [
@@ -48,8 +57,7 @@ export class MapComponent {
     async loadVisibleMeasurements() {
         const measurements = await this.sensorService.getSensorData(this.map.getBounds());
 
-        this.heatLayer.setLatLngs(measurements.map((m) => [m.latitude, m.longitude, m.heat[0].celsiusDegree]));
-        this.heatLayer.redraw();
+        this.drawHeatMap(measurements);
 
         // Reset tooltips
         for (const marker of this.markers) {
@@ -87,6 +95,33 @@ export class MapComponent {
         map.on("moveend", () => {
             this.loadVisibleMeasurements();
         });
+    }
+
+    drawHeatMap(measurements: Measurement[]) {
+        // Préparation et dessin de la TemperatureMap sur le canvas
+        const ctx0 = this.canvas.getContext("2d")!,
+            drw0 = new TemperatureMap(ctx0);
+
+        ctx0.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.heatOverlay) this.map.removeLayer(this.heatOverlay);
+
+        drw0.setPointsFromJSON(measurements, this.canvas.width, this.canvas.height, this.dataType);
+        drw0.drawLow(
+            5,
+            8,
+            false,
+            () => {
+                drw0.drawPoints(this.dataType, () => {
+                    var imageUrl = this.canvas.toDataURL();
+                    var imageBounds: L.LatLngTuple[] = [
+                        [49.128039, -0.43499],
+                        [49.238, -0.265388],
+                    ];
+                    this.heatOverlay = L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
+                });
+            },
+            this.dataType
+        );
     }
 
     onMapReady(map: any) {
