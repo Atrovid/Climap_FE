@@ -806,71 +806,53 @@
         ]
         }
         ];
-        
-                var canvasWidth = 500; // La largeur de votre canvas
-                var canvasHeight = 500; // La hauteur de votre canvas
-        
-        
-       
-        var height = 500;
-        var width = 500;
-        var run = function () {
-            var can0 = document.getElementById("cns0"),
-                ctx0 = can0.getContext("2d"),
-                drw0 = new TemperatureMap(ctx0),
-                can1 = document.getElementById("cns1"),
-                ctx1 = can1.getContext("2d"),
-                drw1 = new TemperatureMap(ctx1),
-                can2 = document.getElementById("cns2"),
-                ctx2 = can2.getContext("2d"),
-                drw2 = new TemperatureMap(ctx2),
-                can3 = document.getElementById("cns3");
 
-            drw0.setPointsFromJSON(jsonData, canvasWidth, canvasHeight);
-            drw0.drawLow(5, 8, false, function () { drw0.drawPoints(); });
-
-            drw1.setPoints(drw0.points, width, height);
-            drw1.drawFull(false, function () { drw1.drawPoints(); });
-
-            drw2.setPoints(drw0.points, width, height);
-            drw2.drawFull(true, function () {  });
-        }
         </script>
     </head>
     <body onload='run()'>
-        <div id="mapid" style='position: absolute; top:    0px; left:  0px; z-index: -10'></div>
-
+        <div id="mapid"></div>
+        <canvas id='cns0' style="display: none;"  width='500' height='500' style="position: absolute; top: 0px; left: 0px; height: 500px; width: 500px;"></canvas>
+    
         <script>
-            var mymap = L.map('mapid').setView([49.183399, -0.350020], 11.5); // Coordonnées de Caen
-        
+            // Fonction pour initialiser et dessiner la carte de température
+            function run() {
+                var can0 = document.getElementById("cns0"),
+                    ctx0 = can0.getContext("2d"),
+                    drw0 = new TemperatureMap(ctx0);
+    
+                // Assurez-vous que jsonData est défini et contient vos données
+                drw0.setPointsFromJSON(jsonData, 500, 500);
+                drw0.drawLow(5, 8, false, function () { 
+                    drw0.drawPoints(); 
+                    
+                    // Créer et ajouter l'ImageOverlay à la carte après avoir dessiné sur le canvas
+                    var imageUrl = can0.toDataURL();
+                    var imageBounds = [[49.128039, -0.43499], [49.238, -0.265388]];
+                    L.imageOverlay(imageUrl, imageBounds).addTo(mymap); 
+                });
+            }
+    
+            // Initialiser la carte Leaflet
+            var mymap = L.map('mapid').setView([49.183399, -0.350020], 11.5);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(mymap);
-        
-            // Créer la couche de heatmap et l'ajouter à la carte
-            var heat = L.heatLayer([], {
-                radius: 25,
-                blur: 15,
-                maxZoom: 17,
-            }).addTo(mymap);
-        
-            // Données de la heatmap
-            var heatData = [
-                [49.180, -0.370, 0.6], // lat, lng, intensity (température ou humidité)
+    
+            // Ajouter les données à la heatmap (si nécessaire)
+            var heat = L.heatLayer([
+                [49.180, -0.370, 0.6],
                 [49.185, -0.360, 0.4],
                 [49.190, -0.350, 0.7],
                 [49.195, -0.340, 0.5],
                 [49.200, -0.330, 0.8]
-            ];
-        
-            // Ajouter les données à la heatmap
-            heat.setLatLngs(heatData);
+            ], {
+                radius: 25,
+                blur: 15,
+                maxZoom: 17,
+            }).addTo(mymap);
         </script>
-        <img src='./map.png' style='position: absolute; top:    0px; left:  500px; z-index: -10'/>
-        <img src='./map.png' style='position: absolute; top:  500px; left:    0px; z-index: -10'/>
-        <canvas id='cns0' width='500' height='500' style="position: absolute; top:    0px; left:    0px; height: 500px; width: 500px;"></canvas>
-        <canvas id='cns1' width='500' height='500' style="position: absolute; top:    0px; left:  500px; height: 500px; width: 500px;"></canvas>
-        <canvas id='cns2' width='500' height='500' style="position: absolute; top:  500px; left:    0px; height: 500px; width: 500px;"></canvas>
     </body>
+    </html>
+    
 </html>
