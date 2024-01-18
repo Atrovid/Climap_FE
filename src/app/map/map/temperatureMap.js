@@ -1,7 +1,6 @@
-'use strict';
+"use strict";
 
-var TemperatureMap = function (ctx) {
-
+export const TemperatureMap = function (ctx) {
     this.ctx = ctx;
     this.points = [];
     this.polygon = [];
@@ -9,9 +8,9 @@ var TemperatureMap = function (ctx) {
         xMin: 0,
         xMax: 0,
         yMin: 0,
-        yMax: 0
+        yMax: 0,
     };
-    this.size = { height: ctx.canvas.height, width: ctx.canvas.width }
+    this.size = { height: ctx.canvas.height, width: ctx.canvas.width };
 };
 
 TemperatureMap.crossProduct = function (o, a, b) {
@@ -19,7 +18,6 @@ TemperatureMap.crossProduct = function (o, a, b) {
 };
 
 TemperatureMap.pointInPolygon = function (point, vs) {
-
     var x = point.x,
         y = point.y,
         inside = false,
@@ -38,8 +36,10 @@ TemperatureMap.pointInPolygon = function (point, vs) {
         xj = vs[j].x;
         yj = vs[j].y;
 
-        intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-        if (intersect) { inside = !inside; }
+        intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+        if (intersect) {
+            inside = !inside;
+        }
         j = i;
     }
 
@@ -47,7 +47,6 @@ TemperatureMap.pointInPolygon = function (point, vs) {
 };
 
 TemperatureMap.squareDistance = function (p0, p1) {
-
     var x = p0.x - p1.x,
         y = p0.y - p1.y;
 
@@ -55,7 +54,6 @@ TemperatureMap.squareDistance = function (p0, p1) {
 };
 
 TemperatureMap.hslToRgb = function (h, s, l) {
-
     var r, g, b, hue2rgb, q, p;
 
     if (s === 0) {
@@ -89,21 +87,36 @@ TemperatureMap.hslToRgb = function (h, s, l) {
     return [(r * 255) | 0, (g * 255) | 0, (b * 255) | 0]; // (x << 0) = Math.floor(x)
 };
 
-TemperatureMap.prototype.getColor = function (levels, value) {
+TemperatureMap.prototype.getColor = function (levels, value, dataType) {
+    var min, max;
+    switch (dataType) {
+        case "temperature":
+            min = 10; // Exemple : plage min pour la température
+            max = 13; // Exemple : plage max pour la température
+            break;
+        case "humidity":
+            min = 30; // Exemple : plage min pour l'humidité
+            max = 90; // Exemple : plage max pour l'humidité
+            break;
+        case "sound":
+            min = 20; // Exemple : plage min pour le son (dB)
+            max = 100; // Exemple : plage max pour le son (dB)
+            break;
+        case "brightness":
+            min = 0; // Exemple : plage min pour la luminosité (lux)
+            max = 100; // Exemple : plage max pour la luminosité (lux)
+            break;
+        default:
+            min = 0;
+            max = 1;
+    }
 
-        // Plage de température ciblée (10 à 13 degrés)
-        var min = 10;
-        var max = 13;
-        var dif = max - min;
-        var lim = 0.55; // Limite pour le calcul de la teinte
-        var lvs = 25;   // Niveaux pour l'arrondi
-    
-        // Normaliser la valeur dans la plage spécifiée
-        var val = Math.max(min, Math.min(value, max));
-    
-        // Calculer la teinte
-        var tmp = 1 - (1 - lim) - (((val - min) * lim) / dif);
-    
+    var dif = max - min;
+    var lim = 0.55; // Limite pour le calcul de la teinte
+    var lvs = 25; // Niveaux pour l'arrondi
+
+    var val = Math.max(min, Math.min(value, max));
+    var tmp = 1 - (1 - lim) - ((val - min) * lim) / dif;
 
     if (levels) {
         tmp = Math.round(tmp * lvs) / lvs;
@@ -113,7 +126,6 @@ TemperatureMap.prototype.getColor = function (levels, value) {
 };
 
 TemperatureMap.prototype.getPointValue = function (limit, point) {
-
     var counter = 0,
         arr = [],
         tmp = 0.0,
@@ -127,7 +139,6 @@ TemperatureMap.prototype.getPointValue = function (limit, point) {
     // From : https://en.wikipedia.org/wiki/Inverse_distance_weighting
 
     if (TemperatureMap.pointInPolygon(point, this.polygon)) {
-
         for (counter = 0; counter < this.points.length; counter = counter + 1) {
             dis = TemperatureMap.squareDistance(point, this.points[counter]);
             if (dis === 0) {
@@ -136,7 +147,9 @@ TemperatureMap.prototype.getPointValue = function (limit, point) {
             arr[counter] = [dis, counter];
         }
 
-        arr.sort(function (a, b) { return a[0] - b[0]; });
+        arr.sort(function (a, b) {
+            return a[0] - b[0];
+        });
 
         for (counter = 0; counter < limit; counter = counter + 1) {
             ptr = arr[counter];
@@ -146,14 +159,12 @@ TemperatureMap.prototype.getPointValue = function (limit, point) {
         }
 
         return t / b;
-
     } else {
         return -255;
     }
 };
 
 TemperatureMap.prototype.setConvexhullPolygon = function (points) {
-
     var lower = [],
         upper = [],
         i = 0;
@@ -176,14 +187,20 @@ TemperatureMap.prototype.setConvexhullPolygon = function (points) {
 
     // Get convex hull polygon from points sorted by 'x'
     for (i = 0; i < points.length; i = i + 1) {
-        while (lower.length >= 2 && TemperatureMap.crossProduct(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0) {
+        while (
+            lower.length >= 2 &&
+            TemperatureMap.crossProduct(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0
+        ) {
             lower.pop();
         }
         lower.push(points[i]);
     }
 
     for (i = points.length - 1; i >= 0; i = i - 1) {
-        while (upper.length >= 2 && TemperatureMap.crossProduct(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0) {
+        while (
+            upper.length >= 2 &&
+            TemperatureMap.crossProduct(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0
+        ) {
             upper.pop();
         }
         upper.push(points[i]);
@@ -195,7 +212,6 @@ TemperatureMap.prototype.setConvexhullPolygon = function (points) {
 };
 
 TemperatureMap.prototype.setPoints = function (arr, width, height) {
-
     this.points = arr;
     this.width = width;
     this.height = height;
@@ -203,7 +219,6 @@ TemperatureMap.prototype.setPoints = function (arr, width, height) {
 };
 
 TemperatureMap.prototype.setRandomPoints = function (points, width, height) {
-
     var counter = 0,
         x = 0,
         y = 0,
@@ -211,20 +226,23 @@ TemperatureMap.prototype.setRandomPoints = function (points, width, height) {
         rst = [];
 
     for (counter = 0; counter < points; counter = counter + 1) {
-
         x = parseInt((Math.random() * 100000) % width, 10);
         y = parseInt((Math.random() * 100000) % height, 10);
         v = (Math.random() * 100) / 2;
 
-        if (Math.random() > 0.5) { v = -v; }
-        if (Math.random() > 0.5) { v = v + 30; }
+        if (Math.random() > 0.5) {
+            v = -v;
+        }
+        if (Math.random() > 0.5) {
+            v = v + 30;
+        }
 
         rst.push({ x: x, y: y, value: v });
     }
 
     this.setPoints(rst, width, height);
 };
-TemperatureMap.prototype.setPointsFromJSON = function (jsonData, width, height) {
+TemperatureMap.prototype.setPointsFromJSON = function (jsonData, width, height, dataType) {
     var latMin = 49.128039;
     var latMax = 49.238;
     var lonMin = -0.43499;
@@ -232,17 +250,33 @@ TemperatureMap.prototype.setPointsFromJSON = function (jsonData, width, height) 
 
     var rst = jsonData.map(function (data) {
         var x = ((data.longitude - lonMin) / (lonMax - lonMin)) * width;
-        var y = ((latMax - data.latitude) / (latMax - latMin)) * height; // Inversé car le canvas Y est inversé
-        var v = data.heat[0].celsiusDegree; // Assurez-vous que le JSON a cette structure
-        return { x: x, y: y, value: v };
+        var y = ((latMax - data.latitude) / (latMax - latMin)) * height;
+        var value;
+
+        switch (dataType) {
+            case "temperature":
+                value = data.heat[0].celsiusDegree;
+                break;
+            case "humidity":
+                value = data.humidity[0].relativeHumidityPercentage;
+                break;
+            case "sound":
+                value = data.sound[0].decibel;
+                break;
+            case "brightness":
+                value = data.brightness[0].lux;
+                break;
+            default:
+                value = 0; // Valeur par défaut si le type de données est inconnu
+        }
+
+        return { x: x, y: y, value: value };
     });
 
     this.setPoints(rst, width, height);
 };
 
-
-TemperatureMap.prototype.drawLow = function (limit, res, clean, callback) {
-
+TemperatureMap.prototype.drawLow = function (limit, res, clean, callback, dataType) {
     var self = this,
         ctx = this.ctx,
         dbl = 2 * res,
@@ -251,7 +285,7 @@ TemperatureMap.prototype.drawLow = function (limit, res, clean, callback) {
         x = 0,
         y = 0,
         val = 0.0,
-        str = '',
+        str = "",
         xBeg = self.limits.xMin,
         yBeg = self.limits.yMin,
         xEnd = self.limits.xMax,
@@ -260,19 +294,19 @@ TemperatureMap.prototype.drawLow = function (limit, res, clean, callback) {
         gradient;
 
     ctx.clearRect(0, 0, this.size.width, this.size.height);
-    ctx.width += 0;   //<=== Resizing the canvas will cause the canvas to get cleared.
+    ctx.width += 0; //<=== Resizing the canvas will cause the canvas to get cleared.
 
     // Draw aproximation
     for (x = xBeg; x < xEnd; x = x + res) {
         for (y = yBeg; y < yEnd; y = y + res) {
             val = self.getPointValue(lim, { x: x, y: y });
             if (val !== -255) {
-                ctx.beginPath();  //<== beginpath
-                col = self.getColor(false, val);
-                str = 'rgba(' + col[0] + ', ' + col[1] + ', ' + col[2] + ', ';
+                ctx.beginPath(); //<== beginpath
+                col = self.getColor(false, val, dataType);
+                str = "rgba(" + col[0] + ", " + col[1] + ", " + col[2] + ", ";
                 gradient = ctx.createRadialGradient(x, y, 1, x, y, res);
-                gradient.addColorStop(0, str + '0.5)');
-                gradient.addColorStop(1, str + '0)');
+                gradient.addColorStop(0, str + "0.5)");
+                gradient.addColorStop(1, str + "0)");
                 ctx.fillStyle = "#191919"; //<=== must be filled white for properly render
                 ctx.fillStyle = gradient;
                 ctx.fillRect(x - res, y - res, dbl, dbl);
@@ -284,8 +318,8 @@ TemperatureMap.prototype.drawLow = function (limit, res, clean, callback) {
 
     // Erase polygon outsides
     if (clean && self.polygon.length > 1) {
-        ctx.globalCompositeOperation = 'destination-in';
-        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.globalCompositeOperation = "destination-in";
+        ctx.fillStyle = "rgb(255, 255, 255)";
         ctx.beginPath();
         ctx.moveTo(self.polygon[0].x, self.polygon[0].y);
         for (cnt = 1; cnt < self.polygon.length; cnt = cnt + 1) {
@@ -294,16 +328,16 @@ TemperatureMap.prototype.drawLow = function (limit, res, clean, callback) {
         ctx.lineTo(self.polygon[0].x, self.polygon[0].y);
         ctx.closePath();
         ctx.fill();
-        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalCompositeOperation = "source-over";
     }
 
-    if (typeof callback === 'function') {
+    if (typeof callback === "function") {
         callback();
     }
 };
 
 TemperatureMap.prototype.drawFull = function (levels, callback) {
-    'use strict';
+    "use strict";
     var self = this,
         ctx = this.ctx,
         img = this.ctx.getImageData(0, 0, self.width, self.height),
@@ -326,13 +360,12 @@ TemperatureMap.prototype.drawFull = function (levels, callback) {
         bucleSteps = 100.0,
         recursive = function () {
             window.requestAnimationFrame(function (timestamp) {
-
-                tBeg = (new Date()).getTime();
+                tBeg = new Date().getTime();
                 for (cnt = 0; cnt < bucleSteps; cnt = cnt + 1) {
                     val = self.getPointValue(lim, { x: x, y: y });
                     idx = x * 4 + wy;
                     if (val !== -255) {
-                        col = self.getColor(levels, val);
+                        col = self.getColor(levels, val, dataType);
                         data[idx] = col[0];
                         data[idx + 1] = col[1];
                         data[idx + 2] = col[2];
@@ -346,7 +379,7 @@ TemperatureMap.prototype.drawFull = function (levels, callback) {
                     }
                 }
 
-                tDif = (new Date()).getTime() - tBeg;
+                tDif = new Date().getTime() - tBeg;
                 if (tDif === 0) {
                     tDif = 1;
                 }
@@ -357,7 +390,7 @@ TemperatureMap.prototype.drawFull = function (levels, callback) {
 
                 if (y < yEnd) {
                     recursive();
-                } else if (typeof callback === 'function') {
+                } else if (typeof callback === "function") {
                     callback();
                 }
             });
@@ -366,39 +399,40 @@ TemperatureMap.prototype.drawFull = function (levels, callback) {
     recursive();
 };
 
-TemperatureMap.prototype.drawPoints = function (callback) {
-
+TemperatureMap.prototype.drawPoints = function (dataType, callback) {
     var self = this,
         PI2 = 2 * Math.PI,
         ctx = this.ctx;
+
     window.requestAnimationFrame(function (timestamp) {
         var col = [],
             idx = 0,
             pnt;
 
-        for (idx = 0; idx < self.points.length; idx = idx + 1) {
+        for (idx = 0; idx < self.points.length; idx += 1) {
             pnt = self.points[idx];
 
-            col = self.getColor(false, pnt.value);
+            // Utilisez dataType dans la fonction getColor
+            col = self.getColor(false, pnt.value, dataType);
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 128)';
+            ctx.fillStyle = "rgba(255, 255, 255, 128)";
             ctx.beginPath();
             ctx.arc(pnt.x, pnt.y, 8, 0, PI2, false);
             ctx.fill();
 
             ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgb(' + col[0] + ', ' + col[1] + ', ' + col[2] + ')';
+            ctx.strokeStyle = "rgb(" + col[0] + ", " + col[1] + ", " + col[2] + ")";
             ctx.beginPath();
             ctx.arc(pnt.x, pnt.y, 8, 0, PI2, false);
             ctx.stroke();
 
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "rgb(0, 0, 0)";
             ctx.fillText(Math.round(pnt.value), pnt.x, pnt.y);
         }
 
-        if (typeof callback === 'function') {
+        if (typeof callback === "function") {
             callback();
         }
     });
