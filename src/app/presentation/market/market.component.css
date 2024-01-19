@@ -3,50 +3,46 @@
     text-align: center;
     width: 100%;
     display: block;
-  }
-  
-  .section-right {
+}
+
+.section-right {
     margin: auto;
     background-color: #f8ece7;
-  }
-  
-  .center-text {
-    /* max-width: 720px;
-    margin: 0 auto; */
+}
+
+.center-text {
     text-align: center;
     font-family: Jost;
     font-weight: 400;
     font-size: 1.3em;
-  }
-  
-  .content-flex-h {
+}
+
+.content-flex-h {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
-    /* font-family: Jost;
-    font-weight: 400; */
-    padding: 2em;  
-  }
-  
-  .content-flex-h > p {
+    padding: 2em;
+}
+
+.content-flex-h > p {
     min-width: 400px;
     width: min-content;
-  }
-  
-  .map-img {
+}
+
+.map-img {
     height: 250px;
-  }
-  
-  button {
+}
+
+button {
     margin: 1em;
-    margin-bottom: 4em;  
-  }
+    margin-bottom: 4em;
+}
 
 .button-map span:after {
-  content: url("../../../assets/map.png");
-  position: absolute;
-  top: 0;
-  right: -15px;
-  transition: 0.5s;
-} 
+    content: url("../../../assets/map.png");
+    position: absolute;
+    top: 0;
+    right: -15px;
+    transition: 0.5s;
+}
