@@ -1,11 +1,12 @@
 import { NgFor } from "@angular/common";
 import { Component, EventEmitter, Output } from "@angular/core";
+import { RouterModule } from "@angular/router";
 import { measureDataConfigs } from "../MeasureDataTypes";
 
 @Component({
     selector: "app-sidebar",
     standalone: true,
-    imports: [NgFor],
+    imports: [NgFor, RouterModule],
     templateUrl: "./sidebar.component.html",
     styleUrl: "./sidebar.component.css",
 })

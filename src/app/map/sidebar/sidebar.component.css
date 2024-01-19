@@ -16,6 +16,11 @@
     padding-bottom: 3em;
 }
 
+.logo-link {
+    display: flex;
+    justify-content: center;
+}
+
 .dataSelect {
     width: 90%;
 }
