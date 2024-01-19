@@ -1,0 +1,21 @@
+:host {
+    position: sticky;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+    border-right: 2px solid #cacaca;
+
+    width: 20em;
+    padding: 1.3em;
+}
+
+.logo {
+    width: 60%;
+    padding-bottom: 3em;
+}
+
+.dataSelect {
+    width: 90%;
+}

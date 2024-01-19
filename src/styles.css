@@ -48,6 +48,31 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+select {
+  padding: 0.8em 1.5em;
+
+  background-color: #ffffff;
+  border-radius: 50em;
+  border: solid 1px #bbbbbb;
+
+  font-family: Jost;
+  font-size: medium;
+
+  /* Arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 95%;
+  background-position-y: 11px;
+}
+
+select:hover {
+  background-color: #f1f1f1;
+
+}
+
 @font-face {
   font-family: 'Jost';
   src: url('assets/fonts/jost/Jost-Regular.ttf');
