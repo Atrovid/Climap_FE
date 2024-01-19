@@ -1,4 +1,53 @@
 .center-text {
-    font-family: Jost;
-    font-weight: 400;
-  }
+  font-family: Jost;
+  font-weight: 400;
+  font-size: 1.3em;
+}
+
+h1{
+  font-family: Lexend;
+  font-weight: 400;
+  font-size: 3em;
+} 
+
+.content{
+  height: fit-content;
+  /* padding: 10em 10em 0em 10em; */
+  justify-content: center;
+  align-items: center;
+}
+
+img {
+  position: relative;
+  top : 0;
+  left: 0;
+  width: 100vw;
+  object-fit: cover;
+  /* border-radius: 15px;
+  -webkit-box-shadow: 2px 4px 11px 0px rgba(0,0,0,0.72); 
+  box-shadow: 2px 4px 11px 0px rgba(0,0,0,0.72); */
+}
+
+.content-center {
+  position: absolute;
+  text-align: center;
+  top: 420%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  margin: 0 auto;
+  display: block;
+}
+
+.paragraph-center {
+  position: relative;
+  background-color: rgba(125, 125, 125, 0.671);
+  padding: 2em;
+  color: white;
+  font-family: Lexend;
+  font-weight: 400;
+  font-size: 1.3em;
+  max-width: 25em;
+  text-shadow: 3px 4px 11px rgba(0,0,0,0.72);
+}
+
+
