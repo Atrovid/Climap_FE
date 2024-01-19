@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    backUrl: "intensif09.ecole.ensicaen.fr/",
+    backUrl: "http://intensif09.ecole.ensicaen.fr:8080/",
 };
