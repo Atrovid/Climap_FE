@@ -91,8 +91,8 @@ TemperatureMap.prototype.getColor = function (levels, value, dataType) {
     var min, max;
     switch (dataType) {
         case "temperature":
-            min = 10; // Exemple : plage min pour la température
-            max = 13; // Exemple : plage max pour la température
+            min = 0; // Exemple : plage min pour la température
+            max = 20; // Exemple : plage max pour la température
             break;
         case "humidity":
             min = 30; // Exemple : plage min pour l'humidité
