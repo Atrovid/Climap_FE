@@ -4,6 +4,7 @@ import * as L from "leaflet";
 import "leaflet.heat/dist/leaflet-heat.js";
 import { Measurement, SensorService } from "../sensor.service";
 
+import { MeasureDataType, measureDataConfigs } from "../MeasureDataTypes";
 import { TemperatureMap } from "./temperatureMap";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
@@ -32,10 +33,10 @@ export class MapComponent implements AfterViewInit {
     constructor(private sensorService: SensorService) {}
 
     ngAfterViewInit(): void {
-        this.canvas = document.getElementById("cns0")! as HTMLCanvasElement;
+        this.canvas = document.getElementById("mapCanvas")! as HTMLCanvasElement;
     }
 
-    dataType = "brightness";
+    dataType: MeasureDataType = measureDataConfigs.get("brightness")!;
 
     map!: L.Map;
     heatOverlay?: L.ImageOverlay;
@@ -101,13 +102,13 @@ export class MapComponent implements AfterViewInit {
 
         ctx0.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        drw0.setPointsFromJSON(measurements, this.canvas.width, this.canvas.height, this.dataType);
+        drw0.setPointsFromJSON(measurements, this.canvas.width, this.canvas.height, this.dataType.value);
         drw0.drawLow(
             5,
             8,
             false,
             () => {
-                drw0.drawPoints(this.dataType).then(() => {
+                drw0.drawPoints(this.dataType.value).then(() => {
                     var imageUrl = this.canvas.toDataURL();
                     var imageBounds: L.LatLngTuple[] = [
                         [49.128039, -0.43499],
@@ -117,7 +118,7 @@ export class MapComponent implements AfterViewInit {
                     this.heatOverlay.setUrl(imageUrl);
                 });
             },
-            this.dataType
+            this.dataType.value
         );
     }
 

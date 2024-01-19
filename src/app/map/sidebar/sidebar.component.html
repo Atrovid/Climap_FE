@@ -1,0 +1,6 @@
+<a class="logo-link" routerLink="/" >
+    <img src="assets/clipmap.png" class="logo" />
+</a>
+<select class="dataSelect" (change)="onSelectChange($event)">
+    <option *ngFor="let type of dataTypes" value="{{ type.value }}">{{ type.label }}</option>
+</select>
