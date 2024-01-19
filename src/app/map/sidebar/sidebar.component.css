@@ -13,12 +13,29 @@
 
 .logo {
     width: 60%;
-    padding-bottom: 3em;
+    padding-bottom: 1.5em;
 }
 
 .logo-link {
     display: flex;
     justify-content: center;
+}
+
+.home-link {
+    color: #222b24;
+    text-decoration: none;
+    font-family: Jost, sans-serif;
+    font-size: 1.2em;
+}
+
+.home-link:hover {
+    color: #1e7e31;
+}
+
+hr {
+    margin: 2em 0;
+    width: 60%;
+    color: #ebebeb;
 }
 
 .dataSelect {
