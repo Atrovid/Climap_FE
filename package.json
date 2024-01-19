@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "prod": "ng serve --configuration production --port 80",
+    "prod": "ng serve --configuration production --host 0.0.0.0 --port 80",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
