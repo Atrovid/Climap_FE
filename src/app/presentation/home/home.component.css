@@ -9,7 +9,6 @@
 .content{
   position: relative;
   height: 80vh;
-  /* padding: 10em 10em 0em 10em; */
   justify-content: center;
   align-items: center;
   overflow: hidden;
@@ -50,7 +49,7 @@ h1 {
   color: white;
   font-family: Lexend;
   font-weight: 400;
-  font-size: 3vw;
+  font-size: 2.5em;
   max-width: 25em;
   text-shadow: 3px 4px 11px rgba(0,0,0,0.72);
   padding: 1em;

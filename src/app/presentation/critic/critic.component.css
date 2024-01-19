@@ -1,7 +1,7 @@
 .center-text {
   font-family: Jost;
   font-weight: 400;
-  font-size: 1.5vw;
+  font-size: 1.3em;
 }
 
 h1{
@@ -45,7 +45,7 @@ img {
   color: white;
   font-family: Lexend;
   font-weight: 400;
-  font-size: 1.5vw;
+  font-size: 1.3em;
   max-width: 25em;
   text-shadow: 3px 4px 11px rgba(0,0,0,0.72);
 }

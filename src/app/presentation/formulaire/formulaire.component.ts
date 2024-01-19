@@ -17,6 +17,9 @@ export class FormulaireComponent {
   // });
   protected sendOk = false;
 
+  
+
+
   // constructor() {
   //   this.sendForm.valueChanges.subscribe(() => {
   //     this.sendOk = false;
@@ -25,7 +28,7 @@ export class FormulaireComponent {
   
   send() {
     console.log("envoie Ok");
-    this.sendOk = true;
+    this.sendOk = true;  
   }
 
   noSend() {
@@ -33,3 +36,4 @@ export class FormulaireComponent {
     this.sendOk = false;
   }
 }
+

@@ -1,7 +1,7 @@
 .center-text {
     font-family: Jost;
     font-weight: 400;
-    font-size: 1.5vw;
+    font-size: 1.3em;
   }
   
   h1{
@@ -50,5 +50,8 @@
     margin: 2em;
 }
 #list{
-    text-align: start;
+  text-align: start;
+  font-family: Jost;
+  font-weight: 400;
+  font-size: 1.3em;
 }
